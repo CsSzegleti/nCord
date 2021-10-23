@@ -41,4 +41,24 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    public function uploads()
+    {
+        return $this->hasMany(Torrent::class, 'uploader_id');
+    }
+
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class);
+    }
+
+    public function getAvatarAttribute() {
+        $gravatarHash = md5($this->email);
+        return "https://gravatar.com/avatar/{$gravatarHash}?d=identicon";
+    }
 }
