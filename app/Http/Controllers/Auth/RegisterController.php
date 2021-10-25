@@ -30,8 +30,6 @@ class RegisterController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        // todo fire Registered event
-
         Auth::login($user);
 
         return redirect()->intended('/');
