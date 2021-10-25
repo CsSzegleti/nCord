@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/torrent/{torrent}', [Controllers\TorrentController::class, 'show'])->name('torrent.details');
 
 Route::middleware(['guest'])->group(function ()
 {
@@ -27,4 +29,6 @@ Route::middleware(['guest'])->group(function ()
 Route::middleware(['auth'])->group(function ()
 {
     Route::post('/sign-out', [Controllers\Auth\SessionController::class, 'destroy'])->name('auth.logout');
+    Route::get('/upload', [Controllers\TorrentController::class, 'create'])->name('torrent.upload');
+    Route::post('/upload', [Controllers\TorrentController::class, 'store']);
 });

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Torrent;
+use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TorrentController extends Controller
 {
@@ -22,9 +24,10 @@ class TorrentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        $categories = Category::orderBy('name')->get();
+        return view('torrents.create')->with(compact('categories'));
     }
 
     /**
@@ -35,7 +38,12 @@ class TorrentController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $torrent = Auth::user()
+            ->uploads()
+            ->create($request->all());
+
+        return redirect()
+            ->route('post.details', $torrent);
     }
 
     /**
