@@ -10,7 +10,7 @@ class Torrent extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'description', 'category_id' ];
+    protected $fillable = ['name', 'description', 'category_id', 'filename' ];
     
     public function category()
     {

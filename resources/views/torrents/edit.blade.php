@@ -16,7 +16,7 @@
         <h4 class="display-4">{{ __('Upload') }}</h4>
     </div>
     <div class="card-body">
-        <form action="{{ route('torrent.upload') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('torrent.upload') }}" method="POST">
             @csrf
             <div class="mb-3">
                 <x-form.input name="name" label="{{ __('Name') }}" />

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Torrent;
+use App\Http\Requests\TorrentRequest;
 use App\Models\Category;
+use App\Models\Rating;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -24,7 +26,7 @@ class TorrentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request)
+    public function create()
     {
         $categories = Category::orderBy('name')->get();
         return view('torrents.create')->with(compact('categories'));
@@ -36,14 +38,21 @@ class TorrentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(TorrentRequest $request)
     {
+        // dd($request);
+        $file = $request->file('filename');
+        
+        // echo $file->getRealPath();
         $torrent = Auth::user()
             ->uploads()
             ->create($request->all());
 
         return redirect()
-            ->route('post.details', $torrent);
+            ->route('torrent.details', $torrent);
+
+        $destinationPath = 'storage';
+        $file->move($destinationPath, $file->getClientOriginalName());
     }
 
     /**
@@ -54,7 +63,11 @@ class TorrentController extends Controller
      */
     public function show(Torrent $torrent)
     {
-        //
+        $ratings = $torrent->ratings();
+        $avgRating = $ratings->count() == 0 ? 0 : $ratings->avg();
+
+
+        return view('torrents.show')->with(compact('torrent', 'avgRating'));
     }
 
     /**
@@ -65,7 +78,10 @@ class TorrentController extends Controller
      */
     public function edit(Torrent $torrent)
     {
-        //
+        // $rating = $torrent->ratings()->avg();
+        $categories = Category::orderBy('name')->get();
+
+        return view('torrents.edit')->with(compact('torrent', 'categories'));
     }
 
     /**
@@ -89,5 +105,17 @@ class TorrentController extends Controller
     public function destroy(Torrent $torrent)
     {
         //
+    }
+
+    public function rate(Request $request, Torrent $torrent)
+    {
+        $request->validate([
+            'rating' => 'required|min:1|max:5'
+        ]);
+
+        $rating = new Rating;
+        $rating->user_id = Auth::user()->id;
+        $rating->rating = $request->rating;
+        $torrent->ratings()->save($rating);
     }
 }

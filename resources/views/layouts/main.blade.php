@@ -8,10 +8,6 @@
     <meta name="generator" content="Hugo 0.88.1">
     <title>nCord</title>
 
-    <link rel="canonical" href="https://getbootstrap.com/docs/5.1/examples/offcanvas-navbar/">
-
-    
-
     <!-- Bootstrap core CSS -->
 <link href="css/bootstrap.min.css" rel="stylesheet">
 
@@ -34,6 +30,7 @@
     
     <!-- Custom styles for this template -->
     <link href="css/offcanvas.css" rel="stylesheet">
+    @stack('styles')
   </head>
   <body class="bg-dark">
     
@@ -117,7 +114,7 @@
 
 
     <script src="js/bootstrap.bundle.min.js"></script>
-
-      <script src="js/offcanvas.js"></script>
+    <script src="js/offcanvas.js"></script>
+    @stack('scripts')
   </body>
 </html>
