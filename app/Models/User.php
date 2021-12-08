@@ -52,10 +52,10 @@ class User extends Authenticatable
         return $this->hasMany(Torrent::class, 'uploader_id');
     }
 
-    public function ratings()
-    {
-        return $this->hasMany(Rating::class);
-    }
+    // public function ratings()
+    // {
+    //     return $this->hasMany(Rating::class);
+    // }
 
     public function getAvatarAttribute() {
         $gravatarHash = md5($this->email);

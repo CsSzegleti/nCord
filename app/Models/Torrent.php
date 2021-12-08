@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use PhpParser\Node\Expr\FuncCall;
 
 class Torrent extends Model
 {
@@ -29,6 +28,19 @@ class Torrent extends Model
 
     public function ratings()
     {
-        return $this->hasMany(Rating::class);
+        return $this->belongsToMany(User::class, 'ratings')->withPivot('rating');
+    }
+
+    public function getAvgRating() {
+        if (!$this->ratings->count()) {
+            return null;
+        }
+
+        $sum = 0;
+        foreach ($this->ratings as $rating) {
+            $sum += $rating->pivot('rating');
+        }
+
+        return $sum / $this->ratings->count();
     }
 }
