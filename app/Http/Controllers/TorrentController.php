@@ -140,7 +140,7 @@ class TorrentController extends Controller
 
         $torrents = Torrent::query()
             ->where('name', 'like', "%{$search}%")
-            ->orWhere('description', 'LIKE', "%{$search}%")
+            ->orWhere('description', 'like', "%{$search}%")
             ->get();
         
         return view('torrents.search', compact('torrents'));
