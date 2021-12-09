@@ -42,9 +42,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function comments()
+    public function ratings()
     {
-        return $this->hasMany(Comment::class);
+        return $this->hasMany(Rating::class);
     }
 
     public function uploads()
@@ -54,7 +54,12 @@ class User extends Authenticatable
 
     // public function ratings()
     // {
-    //     return $this->hasMany(Rating::class);
+    //     return $this->belongsToMany(Torrent::class, 'torrent_ratings')->withPivot('rating');
+    // }
+
+    // public function ratings()
+    // {
+    //     return $this->belongsToMany(Torrent::class, 'torrent_ratings')->using(Rating::class);
     // }
 
     public function getAvatarAttribute() {

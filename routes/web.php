@@ -17,6 +17,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/torrent/{torrent}', [Controllers\TorrentController::class, 'show'])->name('torrent.details');
+Route::get('/category/{category}', [Controllers\CategoryController::class, 'show'])->name('category.details');
+Route::get('/search', [Controllers\TorrentController::class, 'search'])->name('torrent.search');
+
 
 Route::middleware(['guest'])->group(function ()
 {
@@ -35,4 +38,5 @@ Route::middleware(['auth'])->group(function ()
     Route::post('/torrent/{torrent}/edit', [Controllers\TorrentController::class, 'update']);
     Route::post('/torrent/{torrent}/rate', [Controllers\TorrentController::class, 'rate'])->name('torrent.rate');
     Route::post('/torrent/{torrent}/image', [Controllers\TorrentController::class, 'uploadImage'])->name('torrent.image');
+    Route::get('/user/{user}', [Controllers\UserController::class, 'show'])->name('user.details');
 });

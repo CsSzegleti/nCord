@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Torrent;
 use App\Http\Requests\TorrentRequest;
 use App\Models\Category;
+use Image;
 use App\Models\Rating;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -40,19 +41,24 @@ class TorrentController extends Controller
      */
     public function store(TorrentRequest $request)
     {
-        // dd($request);
-        $file = $request->file('filename');
         
-        // echo $file->getRealPath();
+        $file = $request->file('filename');
         $torrent = Auth::user()
             ->uploads()
-            ->create($request->all());
-
-        return redirect()
-            ->route('torrent.details', $torrent);
+            ->create([
+                'uploader_id' => Auth::user()->id,
+                'category_id' =>$request->category_id,
+                'name' => $request->name,
+                'description' => $request->description,
+                'filename' => $file->getClientOriginalName(),
+            ]);
 
         $destinationPath = 'storage';
         $file->move($destinationPath, $file->getClientOriginalName());
+
+        return redirect()
+            ->route('torrent.details', $torrent)
+            ->with('success', __('Torrent uploaded'));
     }
 
     /**
@@ -63,8 +69,8 @@ class TorrentController extends Controller
      */
     public function show(Torrent $torrent)
     {
-        $ratings = $torrent->ratings();
-        $avgRating = $ratings->count() == 0 ? 0 : $ratings->avg();
+        $avgRating = $torrent->getAvgRating();
+        // $avgRating = 5; // because it is not working
 
 
         return view('torrents.show')->with(compact('torrent', 'avgRating'));
@@ -78,7 +84,7 @@ class TorrentController extends Controller
      */
     public function edit(Torrent $torrent)
     {
-        // $rating = $torrent->ratings()->avg();
+        
         $categories = Category::orderBy('name')->get();
 
         return view('torrents.edit')->with(compact('torrent', 'categories'));
@@ -93,7 +99,10 @@ class TorrentController extends Controller
      */
     public function update(Request $request, Torrent $torrent)
     {
-        //
+        $torrent->update($request->all());
+
+        return redirect()->route('torrent.edit', $torrent)
+        ->with('success', __('Successful update'));
     }
 
     /**
@@ -115,7 +124,43 @@ class TorrentController extends Controller
 
         $rating = new Rating;
         $rating->user_id = Auth::user()->id;
+        $rating->message = $request->message;
         $rating->rating = $request->rating;
+
         $torrent->ratings()->save($rating);
+
+        // $torrent->ratings()->attach(Auth::user()->id, ['rating' => $request->rating]);
+        return back()
+            ->with('success', __('Thank you for your feedback'));
+    }
+
+    public function search(Request $request)
+    {
+        $search = $request->input('search');
+
+        $torrents = Torrent::query()
+            ->where('name', 'like', "%{$search}%")
+            ->orWhere('description', 'LIKE', "%{$search}%")
+            ->get();
+        
+        return view('torrents.search', compact('torrents'));
+    }
+
+    public function uploadImage(Request $request, Torrent $torrent)
+    {
+        if (!$request->ajax()) {
+            return abort(404);
+        }
+
+        $image = $request->file('image');
+        $fileID = uniqid();
+        $filename = "images/{$fileID}.{$image->extension()}";
+
+        Image::make($image)->save(public_path("/storage/{$filename}"));
+
+        $torrent->image = $filename;
+        $torrent->save();
+
+        return response()->json(['image' => $torrent->image ]);
     }
 }

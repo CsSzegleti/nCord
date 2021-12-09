@@ -9,7 +9,7 @@
     <title>nCord</title>
 
     <!-- Bootstrap core CSS -->
-<link href="css/bootstrap.min.css" rel="stylesheet">
+<link href="{{ asset('css/bootstrap.min.css')}}" rel="stylesheet">
 
     <style>
       .bd-placeholder-img {
@@ -29,7 +29,7 @@
 
     
     <!-- Custom styles for this template -->
-    <link href="css/offcanvas.css" rel="stylesheet">
+    <link href="{{ asset('css/offcanvas.css')}}" rel="stylesheet">
     @stack('styles')
   </head>
   <body class="bg-dark">
@@ -37,6 +37,7 @@
 @include('layouts._header')
 
 <main class="container">
+  @include('layouts.alerts._success')
   <div class="my-3 p-3 bg-body rounded shadow-sm">
     @yield('content')
     <!--
@@ -113,8 +114,8 @@
 </main>
 
 
-    <script src="js/bootstrap.bundle.min.js"></script>
-    <script src="js/offcanvas.js"></script>
+    <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('js/offcanvas.js') }}"></script>
     @stack('scripts')
   </body>
 </html>

@@ -18,6 +18,7 @@ class CreateRatingsTable extends Migration
             $table->foreignId('user_id');
             $table->foreignId('torrent_id');
             $table->integer('rating');
+            $table->text('message')->nullable();
             $table->timestamps();
         });
     }

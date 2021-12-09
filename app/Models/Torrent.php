@@ -21,24 +21,30 @@ class Torrent extends Model
         return $this->belongsTo(User::class, 'uploader_id');
     }
 
-    public function comments()
-    {
-        return $this->hasMany(Comment::class)->orderBy('created_at', 'desc');
-    }
-
     public function ratings()
     {
-        return $this->belongsToMany(User::class, 'ratings')->withPivot('rating');
+        return $this->hasMany(Rating::class)->orderBy('created_at', 'desc');
     }
+
+    // public function ratings()
+    // {
+    //     return $this->belongsToMany(User::class, 'torrent_ratings')->withPivot('rating')->withTimestamps();
+    // }
+
+    // public function ratings()
+    // {
+    //     return $this->belongsToMany(User::class, 'torrent_ratings')->using(Rating::class);
+    // }
 
     public function getAvgRating() {
         if (!$this->ratings->count()) {
-            return null;
+            return 0;
         }
 
         $sum = 0;
+
         foreach ($this->ratings as $rating) {
-            $sum += $rating->pivot('rating');
+            $sum += $rating->rating;
         }
 
         return $sum / $this->ratings->count();
